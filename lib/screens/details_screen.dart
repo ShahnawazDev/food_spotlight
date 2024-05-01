@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:food_spotlight/models/recent_search.dart';
+import 'package:food_spotlight/models/search.dart';
 import 'package:food_spotlight/widgets/ingredient_tile.dart';
 import 'package:food_spotlight/widgets/nutritional_info_card.dart';
 
 class DetailsScreen extends StatelessWidget {
-  final RecentSearch search;
+  final Search search;
 
   const DetailsScreen({super.key, required this.search});
 
@@ -18,7 +18,7 @@ class DetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.file(search.ingredientImage),
+            Image.file(search.productImage),
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -27,7 +27,7 @@ class DetailsScreen extends StatelessWidget {
               ),
             ),
             // Display ingredients using IngredientTile
-            ...search.ingredients.map(
+            ...search.productInfo.ingredients.map(
               (ingredient) => IngredientTile(ingredient: ingredient),
             ),
             const Padding(
@@ -39,7 +39,7 @@ class DetailsScreen extends StatelessWidget {
             ),
             // Display nutritional information using NutritionalInfoCard
             NutritionalInfoCard(
-              nutritionalInfo: search.nutritionalInfo,
+              nutritionalInfo: search.productInfo.nutritionalInfo,
             ),
           ],
         ),

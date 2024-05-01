@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:food_spotlight/models/ingredient.dart';
 import 'package:food_spotlight/models/nutritional_info.dart';
-import 'package:food_spotlight/models/recent_search.dart';
+import 'package:food_spotlight/models/product_info.dart';
+import 'package:food_spotlight/models/search.dart';
 import 'package:food_spotlight/providers/recent_searches_provider.dart';
 import 'package:food_spotlight/screens/details_screen.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,25 +41,71 @@ class _CaptureImageScreenState extends ConsumerState<CaptureImageScreen> {
 
     // Implement your AI interaction logic here
     // ... assuming it returns a RecentSearch object
-    Future<RecentSearch> analyzeImageAndText(
-        File image, String foodName) async {
+    Future<Search> analyzeImageAndText(File image, String foodName) async {
       // Implement your logic to analyze the image and text here
       // ...
 
       // Return the result as a RecentSearch object
-      return RecentSearch(
-        productName: 'example',
-        ingredientImage: image,
-        ingredients: [],
-        nutritionalInfo: NutritionalInfo(
-          calories: 0,
-          macronutrients: [],
-          micronutrients: [],
-        ),
+
+      Search sampleSearch = Search(
+          productName: foodName,
+          productImage: image,  // Replace with actual image URL
+          productInfo: ProductInfo(
+            servingSize: "2 oz (56g)",
+            date: DateTime.now(),
+            ingredients: [
+              Ingredient(
+                name: "Organic Whole Wheat Flour",
+                scientificName: "Triticum aestivum",
+                function: "Main ingredient",
+                source: "USA",
+                healthImplications: "Good source of fiber",
+                sustainability: "Sustainably farmed",
+                isOrganic: true,
+                isGMO: false,
+                isFairTrade: false,
+              ),Ingredient(
+                name: "Organic Whole Wheat Flour",
+                scientificName: "Triticum aestivum",
+                function: "Main ingredient",
+                source: "USA",
+                healthImplications: "Good source of fiber",
+                sustainability: "Sustainably farmed",
+                isOrganic: true,
+                isGMO: false,
+                isFairTrade: false,
+              )
+            ],
+            nutritionalInfo: NutritionalInfo(
+              servingSize: "2 oz (56g)",
+              calories: 200,
+              macronutrients: [
+                MacroNutrient(name: "Total Fat", amount: "1g"),
+                MacroNutrient(name: "Protein", amount: "7g"),
+                MacroNutrient(name: "Total Carbohydrates", amount: "42g"),
+              ],
+              micronutrients: [
+                MicroNutrient(name: "Iron", amount: "8% DV"),
+              ],
+              dailyValuePercentage: {"Iron": "8%", "Calcium": "2%"},
+              addedSugar: 0,
+              naturalSugar: 2,
+              sugarAlcohol: 0,
+            ),
+            tags: ["organic", "whole wheat", "vegan"],
+            categories: ["pasta", "grains"],
+            labels: ["USDA Organic"],
+            allergens: ["Wheat"],
+            diets: ["Vegetarian", "Vegan"],
+            healthLabels: ["Good source of fiber"],
+            cautions: [],
+          )
       );
+
+      return sampleSearch;
     }
 
-    final RecentSearch result =
+    final Search result =
         await analyzeImageAndText(_image!, _foodNameController.text);
 
     // Add the search result to the recent searches

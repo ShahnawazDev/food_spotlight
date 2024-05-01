@@ -25,7 +25,7 @@ class HomeScreen extends ConsumerWidget {
         itemBuilder: (context, index) {
           final search = recentSearches[index];
           return ListTile(
-            leading: Image.file(search.ingredientImage),
+            leading: Image.file(search.productImage),
             title: Text(search.productName),
             onTap: () {
               Navigator.push(
@@ -42,7 +42,7 @@ class HomeScreen extends ConsumerWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CaptureImageScreen()),
+            MaterialPageRoute(builder: (context) => const CaptureImageScreen()),
           );
         },
         child: const Icon(Icons.camera_alt),
