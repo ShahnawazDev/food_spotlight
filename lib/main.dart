@@ -18,11 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Food Spotlight',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green,),
+        scaffoldBackgroundColor: Colors.green.shade50,
         useMaterial3: true,
       ),
       home: const HomeScreen(),
     );
   }
+
 } // Replace with your actual path
 
