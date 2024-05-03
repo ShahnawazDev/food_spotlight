@@ -8,7 +8,6 @@ import 'package:food_spotlight/screens/waiting_screen.dart';
 import 'package:food_spotlight/widgets/food_item_list.dart';
 import 'package:food_spotlight/widgets/image_capture_bottom_sheet.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:food_spotlight/providers/recent_searches_provider.dart';
 
@@ -97,8 +96,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     final recentSearches = ref.watch(recentSearchesProvider);
 
     Size size = MediaQuery.of(context).size;
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd-MM-yyy').format(now);
 
     return Scaffold(
       body: Column(
@@ -120,9 +117,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       final search = recentSearches[index];
                       return FoodListItems(
                         search: search,
-                        size: size,
-                        formattedDate: formattedDate,
-                        index: index,
                       );
                     },
                   ),
@@ -144,6 +138,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton(
+                heroTag: 'camera',
                 isExtended: true,
                 onPressed: getImageFromCamera,
                 child: const Icon(
@@ -155,6 +150,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 width: 10,
               ),
               FloatingActionButton(
+                heroTag: 'gallery',
                 isExtended: true,
                 onPressed: getImageFromGallery,
                 child: const Icon(

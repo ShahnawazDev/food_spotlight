@@ -13,17 +13,16 @@ class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final List<String> items = List.generate(20, (index) => 'Item $index');
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        isExtended:true,
+        isExtended: true,
         onPressed: () {
-
-          String contextText = search.productInfo.toJson().toString();
+          String responseText = search.responseText;
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ChatScreen(
-                contextText: contextText,
+                contextText: responseText,
+                productName: search.productName,
               ),
             ),
           );
@@ -181,15 +180,14 @@ class CategoryWidget extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.orange.shade100),
-          child:  Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-               const Text("Health Labels"),
-              if (search.productInfo.healthLabels.isEmpty)
-                 const Text("No"),
+              const Text("Health Labels"),
+              if (search.productInfo.healthLabels.isEmpty) const Text("No"),
               if (search.productInfo.allergens.isNotEmpty)
                 ...search.productInfo.healthLabels.map(
-                      (e) => Text(
+                  (e) => Text(
                     e,
                     style: const TextStyle(
                       fontSize: 14,
@@ -208,21 +206,21 @@ class CategoryWidget extends StatelessWidget {
               color: Colors.blue.shade300),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-             children: [
-               const Text("Cautions"),
-               if (search.productInfo.cautions.isEmpty)
-                 const Text("No Cautions"),
-               if (search.productInfo.cautions.isNotEmpty)
-                 ...search.productInfo.healthLabels.map(
-                       (e) => Text(
-                     e,
-                     style: const TextStyle(
-                       fontSize: 14,
-                       fontWeight: FontWeight.bold,
-                     ),
-                   ),
-                 ),
-             ],
+            children: [
+              const Text("Cautions"),
+              if (search.productInfo.cautions.isEmpty)
+                const Text("No Cautions"),
+              if (search.productInfo.cautions.isNotEmpty)
+                ...search.productInfo.healthLabels.map(
+                  (e) => Text(
+                    e,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ],
@@ -331,10 +329,11 @@ class NutrientsWidget extends StatelessWidget {
                               style: const TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500),
                             ),
-                            ...nutritionalInfo.macronutrients
-                                .map((macroNutrient) => MacroNutrientTile(
-                                    macroNutrient: macroNutrient))
-                                .toList(),
+                            ...nutritionalInfo.macronutrients.map(
+                              (macroNutrient) => MacroNutrientTile(
+                                macroNutrient: macroNutrient,
+                              ),
+                            ),
                           ],
                         ),
                       ),

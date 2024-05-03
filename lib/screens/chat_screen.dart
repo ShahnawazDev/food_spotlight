@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:food_spotlight/constant/api_keys.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:typewritertext/typewritertext.dart';
 
 class ChatScreen extends StatefulWidget {
+  final String? productName;
   final String contextText;
 
-  const ChatScreen({super.key, required this.contextText});
+  const ChatScreen({super.key, required this.contextText, this.productName});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -17,51 +18,48 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
 
   bool isLoading = false;
+  final firstAIAnswer ='Hi, I am your Personal Health Assistant. What would you like to know?';
   final List<Message> messages = [];
 
-  Future<String> _sendMessage(String question) async {
-    var apiKey =
-        'GOOGLE_GEN_AI_PaLM_API_KEY'; //Get API key from google PaLM GenAI
+  final model = GenerativeModel(
+    model: 'gemini-1.0-pro', // replace with your model
+    apiKey: geminiAPIKey, // replace with your API key
+    generationConfig: GenerationConfig(
+      maxOutputTokens: 8192,
+      topP: 0.98,
+      topK: 0,
+      temperature: 1,
+    ),
+  );
 
-    var url = Uri.parse(
-        'https://generativelanguage.googleapis.com/v1beta3/models/chat-bison-001:generateMessage?key=$apiKey');
-    var headers = {'Content-Type': 'application/json; charset=UTF-8'};
-    final body = jsonEncode({
-      "prompt": {
-        "context":
-            '${widget.contextText}.\n\nAnswer the following question with reference to the above text context, using a concise and informative style. Provide more detail only when explicitly asked.',
-        // "examples": [],
-        // "examples": [
-        //   {
-        //     "input": {"content": "Write a haiku about Google Photos."},
-        //     "output": {
-        //       "content":
-        //           "Google Photos, my friend\nA journey of a lifetime\nCaptured in pixels"
-        //     }
-        //   }
-        // ],
-        "messages": [
-          {"content": question}
-        ]
-      },
-      "candidate_count": 3,
-      "temperature": 1,
-    });
+Future<String> _startChat({question}) async {
 
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        final decodedResponse = json.decode(response.body);
-        // String answer = response.body;
-        String answer = decodedResponse['candidates'][0]['content'];
-        return answer;
-      } else {
-        return 'Request failed with status: ${response.statusCode}.\n\n${response.body}';
-      }
-    } catch (error) {
-      throw Exception('Error sending POST request: $error');
-    }
+  String contextText ='''
+        '${widget.contextText}'
+        'above is all the information you need to know about health and nutrition.'
+        'And the name of Product is ${widget.productName}'
+        'if product name is provides then you have to answer the question based on the product name.'
+        'Based on the information provided and your knowledge about that product by product name, you have to answer my questions.'
+        'Hello AI, I’m seeking advice and information on health and nutrition. Could you provide guidance on a balanced diet, nutritional needs, and how to maintain a healthy lifestyle?'
+        
+        'Assume you are an Health and Nutrition Expert. Answer the following question with reference to the above text context, using a concise and informative style. Provide more detail only when explicitly asked.'
+    ''';
+
+  try {
+
+    // Initialize the chat
+    final chat = model.startChat(history: [
+      Content.text(contextText),
+      Content.model([TextPart(firstAIAnswer)])
+    ]);
+    var content = Content.text(question);
+    var response = await chat.sendMessage(content);
+    String answer = response.text ?? 'No response found. Please try again.';
+    return answer;
+  } catch (error) {
+    throw Exception('Error generating AI response: $error');
   }
+}
 
   void _handleSubmitted(String text) async {
     FocusScopeNode currentFocus =
@@ -87,7 +85,8 @@ class _ChatScreenState extends State<ChatScreen> {
         messages.add(Message(authorId: 1, content: ''));
       });
     });
-    String answer = await _sendMessage(text);
+
+    String answer = await _startChat(question: text);
     setState(() {
       messages.removeLast();
       messages.add(Message(authorId: 1, content: answer));
@@ -103,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
         decoration: BoxDecoration(
           // color: Theme.of(context).colorScheme.secondary,
-          color: Colors.lightBlueAccent,
+          color: Colors.green[300],
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -113,8 +112,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 controller: _textController,
                 onSubmitted: _handleSubmitted,
                 decoration: const InputDecoration.collapsed(
-                  hintText: "Ask me anything about your meeting",
-                  hintStyle: TextStyle(color: Colors.white70),
+                  hintText: "Ask me anything...",
+                  hintStyle: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -134,6 +133,12 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    messages.add(Message(authorId: 1, content: firstAIAnswer));
   }
 
   @override
@@ -199,7 +204,7 @@ class MessageItem extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(message.authorId == 0 ? 'You' : 'AI Assistant',
+                    Text(message.authorId == 0 ? 'You' : 'Health Assistant',
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const Divider(
                       color: Colors.grey,

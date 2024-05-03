@@ -18,18 +18,18 @@ class _ImageCaptureBottomSheetState extends State<ImageCaptureBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: 0.6,
+        initialChildSize: 0.7,
         maxChildSize: 0.8,
         expand: false,
         snap: true,
-        snapSizes: const [0.6, 0.8],
+        snapSizes: const [0.52,0.7, 0.8],
         builder: (context, scrollController) {
           return SingleChildScrollView(
             controller: scrollController,
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
                   child: TextField(
                     controller: foodNameController,
                     textAlign: TextAlign.center,

@@ -19,6 +19,7 @@ class NetworkService {
       temperature: 1,
     ),
   );
+  String responseText = '';
 
   Future<String?> generateAIResponse(File imageFile, String prompt) async {
     Uint8List image = await imageFile.readAsBytes();
@@ -26,6 +27,7 @@ class NetworkService {
     final response = await model.generateContent([
       Content.multi([TextPart(prompt), DataPart('image/jpeg', image)])
     ]);
+    responseText = response.text ?? '';
     return response.text;
   }
 
@@ -55,6 +57,7 @@ class NetworkService {
       productName: foodName,
       productImage: image,
       productInfo: productInfo,
+      responseText: responseText,
     );
   }
 }

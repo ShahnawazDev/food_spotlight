@@ -20,6 +20,13 @@ class _WaitingScreenState extends State<WaitingScreen> with TickerProviderStateM
   }
 
   @override
+  void dispose() {
+    waitingAnimationController.dispose();
+    hourglassAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
