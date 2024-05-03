@@ -108,9 +108,13 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           Expanded(
             child: recentSearches.isEmpty
-                ? const Center(
-                    child: Text('No recent searches yet.'),
-                  )
+                ? Center(
+                  child: Text('Take a Image \nOf Food Packets',style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey
+                  ),),
+                )
                 : ListView.builder(
                     itemCount: recentSearches.length,
                     itemBuilder: (context, index) {

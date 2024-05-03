@@ -27,7 +27,7 @@ class IngredientTileWidget extends StatelessWidget {
                     topRight: Radius.circular(25),
                     bottomRight: Radius.circular(25),
                   ),
-                  color: Colors.green.shade100
+                  color: Colors.green.shade300
 
               ),
 
@@ -37,15 +37,15 @@ class IngredientTileWidget extends StatelessWidget {
                   Expanded(
                     child: Text(ingredient.name,style: const TextStyle(
 
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold
                     ),),
                   ),
                   Container(
-                      height: size.height *.05,
-                      width: size.width*.09,
+                      height: 34,
+                      width: 34,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(20),
                           color: Colors.white
                       ),
 
