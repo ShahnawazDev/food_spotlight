@@ -2,12 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class ImageCaptureBottomSheet extends StatelessWidget {
+class ImageCaptureBottomSheet extends StatefulWidget {
   final File? image;
-  final foodNameController = TextEditingController();
   final void Function(String) onSubmit;
 
-  ImageCaptureBottomSheet({super.key, this.image, required this.onSubmit});
+  const ImageCaptureBottomSheet({super.key, this.image, required this.onSubmit});
+
+  @override
+  State<ImageCaptureBottomSheet> createState() => _ImageCaptureBottomSheetState();
+}
+
+class _ImageCaptureBottomSheetState extends State<ImageCaptureBottomSheet> {
+  final TextEditingController foodNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +31,6 @@ class ImageCaptureBottomSheet extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
                   child: TextField(
-                    onSubmitted: (value) {
-                      foodNameController.text = value;
-                      onSubmit(value);
-                    },
                     controller: foodNameController,
                     textAlign: TextAlign.center,
                     decoration: const InputDecoration(
@@ -39,13 +41,13 @@ class ImageCaptureBottomSheet extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (image != null)
+                if (widget.image != null)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.file(
-                        image!,
+                        widget.image!,
                         height: 400,
                         width: 400,
                         fit: BoxFit.cover,
@@ -61,7 +63,7 @@ class ImageCaptureBottomSheet extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.pop(context);
-                    onSubmit(foodNameController.text);
+                    widget.onSubmit(foodNameController.text);
                   },
                   child: const Text(
                     "Analyse",
