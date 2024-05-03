@@ -28,7 +28,7 @@ class DetailsScreen extends StatelessWidget {
             ),
           );
         },
-        child: Icon(Icons.chat),
+        child: const Icon(Icons.chat),
       ),
 
       body: CustomScrollView(
@@ -180,18 +180,23 @@ class CategoryWidget extends StatelessWidget {
           width: size.width * .25,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: Colors.red.shade100),
-          child: const Column(
+              color: Colors.orange.shade100),
+          child:  Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
-                "Calories : ",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-              // ...nutritionalInfo.macronutrients
-              //     .map((macroNutrient) => MacroNutrientTile(
-              //     macroNutrient: macroNutrient))
-              //     .toList(),
+               const Text("Health Labels"),
+              if (search.productInfo.healthLabels.isEmpty)
+                 const Text("No"),
+              if (search.productInfo.allergens.isNotEmpty)
+                ...search.productInfo.healthLabels.map(
+                      (e) => Text(
+                    e,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -203,15 +208,21 @@ class CategoryWidget extends StatelessWidget {
               color: Colors.blue.shade300),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: search.productInfo.tags
-                .map((e) => Text(
-                      e,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ))
-                .toList(),
+             children: [
+               const Text("Cautions"),
+               if (search.productInfo.cautions.isEmpty)
+                 const Text("No Cautions"),
+               if (search.productInfo.cautions.isNotEmpty)
+                 ...search.productInfo.healthLabels.map(
+                       (e) => Text(
+                     e,
+                     style: const TextStyle(
+                       fontSize: 14,
+                       fontWeight: FontWeight.bold,
+                     ),
+                   ),
+                 ),
+             ],
           ),
         ),
       ],
