@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final body = jsonEncode({
       "prompt": {
         "context":
-        '${widget.contextText}.\n\nAnswer the following question with reference to the above text context, using a concise and informative style. Provide more detail only when explicitly asked.',
+            '${widget.contextText}.\n\nAnswer the following question with reference to the above text context, using a concise and informative style. Provide more detail only when explicitly asked.',
         // "examples": [],
         // "examples": [
         //   {
@@ -65,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleSubmitted(String text) async {
     FocusScopeNode currentFocus =
-    FocusScope.of(context); // get the current focus node
+        FocusScope.of(context); // get the current focus node
 
     if (!currentFocus.hasPrimaryFocus) {
       // prevent Flutter from throwing an exception
@@ -120,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Container(
               margin:
-              const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                  const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
               decoration: BoxDecoration(
                 color: Colors.white38,
                 borderRadius: BorderRadius.circular(10),
@@ -138,23 +138,28 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        //listview builder inside a expanded widget
-        Expanded(
-          child: ListView.builder(
-            //item count is the number of messages in the chat
-            itemCount: messages.length,
-            //item builder builds each message
-            itemBuilder: (BuildContext context, int index) {
-              Message message = messages[index];
-              return MessageItem(message: message);
-            },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Ask food related queries"),
+      ),
+      body: Column(
+        // alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          //listview builder inside a expanded widget
+          Expanded(
+            child: ListView.builder(
+              //item count is the number of messages in the chat
+              itemCount: messages.length,
+              //item builder builds each message
+              itemBuilder: (BuildContext context, int index) {
+                Message message = messages[index];
+                return MessageItem(message: message);
+              },
+            ),
           ),
-        ),
-        _buildTextComposer(),
-      ],
+          _buildTextComposer(),
+        ],
+      ),
     );
   }
 }
@@ -202,22 +207,22 @@ class MessageItem extends StatelessWidget {
                     ),
                     message.content == ''
                         ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Your Food Assistant is thinking...'),
-                        Container(
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 8),
-                          width: 100,
-                          child: const LoadingIndicator(
-                              indicatorType: Indicator.ballGridBeat),
-                        ),
-                      ],
-                    )
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Your Food Assistant is thinking...'),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                width: 100,
+                                child: const LoadingIndicator(
+                                    indicatorType: Indicator.ballGridBeat),
+                              ),
+                            ],
+                          )
                         : TypeWriterText(
-                      text: Text(message.content),
-                      duration: const Duration(milliseconds: 10),
-                    ),
+                            text: Text(message.content),
+                            duration: const Duration(milliseconds: 10),
+                          ),
                   ]),
             ),
           ),

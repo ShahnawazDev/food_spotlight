@@ -1,11 +1,8 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:food_spotlight/models/nutritional_info.dart';
 
 import 'package:food_spotlight/models/search.dart';
+import 'package:food_spotlight/screens/chat_screen.dart';
 import 'package:food_spotlight/widgets/ingredients_list_widget.dart';
 
 class DetailsScreen extends StatelessWidget {
@@ -18,6 +15,22 @@ class DetailsScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     final List<String> items = List.generate(20, (index) => 'Item $index');
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        isExtended:true,
+        onPressed: () {
+
+          String contextText = search.productInfo.toJson().toString();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ChatScreen(
+                contextText: contextText,
+              ),
+            ),
+          );
+        },
+        child: Icon(Icons.chat),
+      ),
+
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -75,6 +88,10 @@ class DetailsScreen extends StatelessWidget {
                     search: search,
                     nutritionalInfo: search.productInfo.nutritionalInfo,
                   ),
+                  SizedBox(
+                    height: size.height * .03,
+                  ),
+                  CategoryWidget(size: size, search: search)
                 ],
               ),
             ),
@@ -114,6 +131,90 @@ class DetailsScreen extends StatelessWidget {
       //     ],
       //   ),
       // ),
+    );
+  }
+}
+
+class CategoryWidget extends StatelessWidget {
+  const CategoryWidget({
+    super.key,
+    required this.size,
+    required this.search,
+  });
+
+  final Size size;
+  final Search search;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          width: size.width * .25,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.yellow.shade300),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Text("Allergies"),
+              if (search.productInfo.allergens.isEmpty)
+                const Text("Not allergic"),
+              if (search.productInfo.allergens.isNotEmpty)
+                ...search.productInfo.allergens.map(
+                  (e) => Text(
+                    e,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+            ],
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(10),
+          width: size.width * .25,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.red.shade100),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "Calories : ",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              // ...nutritionalInfo.macronutrients
+              //     .map((macroNutrient) => MacroNutrientTile(
+              //     macroNutrient: macroNutrient))
+              //     .toList(),
+            ],
+          ),
+        ),
+        Container(
+          width: size.width * .25,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.blue.shade300),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: search.productInfo.tags
+                .map((e) => Text(
+                      e,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -166,8 +267,8 @@ class NutrientsWidget extends StatelessWidget {
         Container(
           height: size.height * .2,
           width: double.infinity,
-          margin: EdgeInsets.all(6),
-          padding: EdgeInsets.all(4),
+          margin: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
               color: Colors.green.withOpacity(.25),
               borderRadius: BorderRadius.circular(14)),
@@ -196,10 +297,13 @@ class NutrientsWidget extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: search.productInfo.diets
-                              .map((e) => Text(e,style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),))
+                              .map((e) => Text(
+                                    e,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ))
                               .toList(),
                         ),
                       ),
@@ -231,10 +335,13 @@ class NutrientsWidget extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: search.productInfo.tags
-                              .map((e) => Text(e,style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),))
+                              .map((e) => Text(
+                                    e,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ))
                               .toList(),
                         ),
                       ),
@@ -259,7 +366,7 @@ class MacroNutrientTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       "${macroNutrient.name}:${macroNutrient.amount}",
-      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
     );
   }
 }
