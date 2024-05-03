@@ -18,7 +18,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
 
   bool isLoading = false;
-  final firstAIAnswer ='Hi, I am your Personal Health Assistant. What would you like to know?';
+  final firstAIAnswer =
+      'Hi, I am your Personal Health Assistant. What would you like to know?';
   final List<Message> messages = [];
 
   final model = GenerativeModel(
@@ -32,9 +33,8 @@ class _ChatScreenState extends State<ChatScreen> {
     ),
   );
 
-Future<String> _startChat({question}) async {
-
-  String contextText ='''
+  Future<String> _startChat({question}) async {
+    String contextText = '''
         '${widget.contextText}'
         'above is all the information you need to know about health and nutrition.'
         'And the name of Product is ${widget.productName}'
@@ -45,21 +45,20 @@ Future<String> _startChat({question}) async {
         'Assume you are an Health and Nutrition Expert. Answer the following question with reference to the above text context, using a concise and informative style. Provide more detail only when explicitly asked.'
     ''';
 
-  try {
-
-    // Initialize the chat
-    final chat = model.startChat(history: [
-      Content.text(contextText),
-      Content.model([TextPart(firstAIAnswer)])
-    ]);
-    var content = Content.text(question);
-    var response = await chat.sendMessage(content);
-    String answer = response.text ?? 'No response found. Please try again.';
-    return answer;
-  } catch (error) {
-    throw Exception('Error generating AI response: $error');
+    try {
+      // Initialize the chat
+      final chat = model.startChat(history: [
+        Content.text(contextText),
+        Content.model([TextPart(firstAIAnswer)])
+      ]);
+      var content = Content.text(question);
+      var response = await chat.sendMessage(content);
+      String answer = response.text ?? 'No response found. Please try again.';
+      return answer;
+    } catch (error) {
+      throw Exception('Error generating AI response: $error');
+    }
   }
-}
 
   void _handleSubmitted(String text) async {
     FocusScopeNode currentFocus =
@@ -97,40 +96,65 @@ Future<String> _startChat({question}) async {
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).hintColor),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
-        decoration: BoxDecoration(
-          // color: Theme.of(context).colorScheme.secondary,
-          color: Colors.green[300],
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: <Widget>[
-            Flexible(
-              child: TextField(
-                controller: _textController,
-                onSubmitted: _handleSubmitted,
-                decoration: const InputDecoration.collapsed(
-                  hintText: "Ask me anything...",
-                  hintStyle: TextStyle(color: Colors.white),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Container(
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 40 *
+                        (const TextField().maxLines!.toDouble() +
+                            2), // Maximum height for 4 lines
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    child: TextField(
+                      cursorColor: Colors.white,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        decorationColor: Colors.white,
+                      ),
+                      maxLines: null, // Unlimited max lines initially
+                      controller: _textController,
+                      decoration: const InputDecoration.collapsed(
+                        hintText: "Ask me anything...",
+                        hintStyle: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-            Container(
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                color: Colors.white38,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () => _handleSubmitted(_textController.text),
-              ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 12, bottom: 12),
+            height: 56,
+            width: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              color: Colors.white,
             ),
-          ],
-        ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.send,
+                color: Colors.green,
+                size: 26,
+              ),
+              onPressed: () => _handleSubmitted(_textController.text),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -145,7 +169,12 @@ Future<String> _startChat({question}) async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ask food related queries"),
+        backgroundColor: Colors.green,
+        title: const Text(
+          "Ask food related queries",
+          style:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
       body: Column(
         // alignment: Alignment.bottomCenter,
@@ -198,7 +227,7 @@ class MessageItem extends StatelessWidget {
               // margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.black12,
+                color: Colors.green[200],
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(

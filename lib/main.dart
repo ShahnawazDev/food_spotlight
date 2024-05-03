@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Food Spotlight',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green,),
-        scaffoldBackgroundColor: Colors.green.shade50,
+        scaffoldBackgroundColor: Colors.green.shade100,
         useMaterial3: true,
       ),
       home: const HomeScreen(),
