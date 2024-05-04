@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:food_spotlight/constant/text_constant.dart';
+import 'package:food_spotlight/screens/onboarding_screen.dart';
 
 class CustomAppBar extends StatelessWidget {
-  final String userName;
 
   const CustomAppBar({
     super.key,
-    required this.userName,
   });
 
   @override
@@ -16,17 +16,17 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Column(
+           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Hello Buddy",
-                style: TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
+                TextConstants.homeScreenFirstText,
+                style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
               ),
               Text(
-                "Start your day with a healthy meal !!",
-                style: TextStyle(
+                TextConstants.homeScreenSecondText,
+                style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey),
@@ -34,13 +34,19 @@ class CustomAppBar extends StatelessWidget {
             ],
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const OnboardingScreen(),
+                ),
+              );
+            },
             child: Container(
-              height: 46,
-              width: 46,
+              height: 40,
+              width: 40,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-                color: Colors.white,
+                color: Colors.green.shade50,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
@@ -53,7 +59,7 @@ class CustomAppBar extends StatelessWidget {
               ),
               child: const Center(
                 child: Icon(
-                  Icons.person,
+                  Icons.lightbulb_outline_rounded,
                   size: 28,
                   color: Colors.green,
                 ),
