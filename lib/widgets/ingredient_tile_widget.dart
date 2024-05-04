@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:food_spotlight/models/ingredient.dart';
+import 'package:food_spotlight/widgets/ingredient_dialog.dart';
 
 class IngredientTileWidget extends StatelessWidget {
   final Ingredient ingredient;
@@ -14,7 +15,12 @@ class IngredientTileWidget extends StatelessWidget {
     return Expanded(
         child: InkWell(
           onTap: (){
-
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return IngredientDialog(ingredient: ingredient);
+              },
+            );
           },
           child: Container(
               height: size.height *.05,

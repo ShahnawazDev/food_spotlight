@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:food_spotlight/api/network_service.dart';
+import 'package:food_spotlight/constant/text_constant.dart';
 import 'package:food_spotlight/models/search.dart';
 import 'package:food_spotlight/screens/details_screen.dart';
 import 'package:food_spotlight/screens/waiting_screen.dart';
@@ -99,22 +100,25 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
             height: size.height * .08,
           ),
-          const CustomAppBar(
-            userName: "Ankit",
-          ),
+          const CustomAppBar(),
           Expanded(
             child: recentSearches.isEmpty
                 ? Center(
-                  child: Text('Take a Image \nOf Food Packets',style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.grey
-                  ),),
-                )
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      TextConstants.homeScreenCenterText,
+                      style: const TextStyle(
+                        fontSize: 30,
+                        // fontWeight: FontWeight.w700,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: recentSearches.length,
                     itemBuilder: (context, index) {
@@ -169,4 +173,3 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-

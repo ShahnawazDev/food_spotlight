@@ -1,12 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:food_spotlight/screens/home_screen.dart';
+import 'package:food_spotlight/utils/utils.dart';
+import 'package:lottie/lottie.dart';
 
 import '../constant/text_constant.dart';
-
-
-
-
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,35 +15,33 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int counterIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor:  Colors.green.shade100,
-
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20, top: 20),
-        //     child: InkWell(
-        //       onTap: () {
-        //         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>
-        //         const SignInScreen()
-        //         ));
-        //       },
-        //       child: const Text(
-        //         "Skip",
-        //         style: TextStyle(
-        //           color: Colors.grey,
-        //           fontSize: 20.0,
-        //           fontWeight: FontWeight.w500,
-        //         ),
-        //       ),
-        //     ),
-        //   )
-        // ],
+        backgroundColor: Colors.green.shade100,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20, top: 20),
+            child: InkWell(
+              onTap: () {
+                onboardingCompleted();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const HomeScreen()));
+              },
+              child: const Text(
+                "Skip",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       body: Stack(
         alignment: Alignment.bottomCenter,
@@ -59,22 +54,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             },
             controller: _pageController,
             children: [
-              createPage(
-                image: 'assets/images/seeding.png',
+              CreatePage(
+                image: 'assets/lottie/onboarding1.json',
                 title: TextConstants.titleOne,
                 description: TextConstants.descriptionOne,
               ),
-              createPage(
-                image: 'assets/images/flowers.png',
+              CreatePage(
+                image: 'assets/lottie/onboarding2.json',
                 title: TextConstants.titleTwo,
                 description: TextConstants.descriptionTwo,
               ),
-              createPage(
-                image: 'assets/images/gardener.png',
+              CreatePage(
+                image: 'assets/lottie/onboarding3.json',
                 title: TextConstants.titleThree,
                 description: TextConstants.descriptionThree,
               ),
-
             ],
           ),
           Positioned(
@@ -91,32 +85,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: TextConstants.primaryColor,
-
               ),
               child: IconButton(
-                onPressed: (){
+                onPressed: () {
                   setState(() {
-                    if(counterIndex<2) {
+                    if (counterIndex < 2) {
                       counterIndex++;
 
                       if (counterIndex < 3) {
-                        _pageController.nextPage(duration: const Duration(
-                            milliseconds: 300),
+                        _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
                             curve: Curves.easeIn);
                       }
-                    }
-                    else{
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>
-                      const HomeScreen(),
-                      ));
-
+                    } else {
+                      onboardingCompleted();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const HomeScreen(),
+                        ),
+                      );
                     }
                   });
-
                 },
-                icon: const Icon(Icons.arrow_forward,size: 25,color: Colors.white,),
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  size: 25,
+                  color: Colors.white,
+                ),
               ),
-
             ),
           ),
         ],
@@ -139,12 +136,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-class createPage extends StatelessWidget {
+class CreatePage extends StatefulWidget {
   final String image;
   final String title;
   final String description;
 
-  const createPage({
+  const CreatePage({
     super.key,
     required this.image,
     required this.title,
@@ -152,23 +149,50 @@ class createPage extends StatelessWidget {
   });
 
   @override
+  State<CreatePage> createState() => _CreatePageState();
+}
+
+class _CreatePageState extends State<CreatePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
+
+  @override
+  void initState() {
+    animationController = AnimationController(vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 50, right: 50, bottom: 80),
+      padding: const EdgeInsets.only(left: 50, right: 50, bottom: 80),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
             height: 380,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(image), fit: BoxFit.cover)),
+            child: Lottie.asset(widget.image, controller: animationController,
+                onLoaded: (composition) {
+              animationController
+                ..duration = composition.duration
+                ..repeat();
+            }),
+            // decoration: BoxDecoration(
+            //   image:
+            //       DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+            // ),
           ),
           const SizedBox(
             height: 20,
           ),
           Text(
-            title,
+            widget.title,
             style: TextStyle(
                 fontSize: 35,
                 color: TextConstants.primaryColor,
@@ -179,7 +203,7 @@ class createPage extends StatelessWidget {
             height: 20,
           ),
           Text(
-            description,
+            widget.description,
             style: const TextStyle(
               fontSize: 20,
               color: Colors.grey,
