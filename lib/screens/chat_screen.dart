@@ -21,9 +21,8 @@ class _ChatScreenState extends State<ChatScreen> {
   bool isLoading = false;
   final firstAIAnswer =
       '''Hi, I am your Personal Health Assistant. What would you like to know'''
-      ''' about your food?'''
-      '''                                                                   _''';
-      
+      ''' about your food?''';
+
   final List<Message> messages = [];
 
   final NetworkService networkService = NetworkService();
@@ -241,11 +240,9 @@ class MessageItem extends StatelessWidget {
                           )
                         : message.authorId == 1
                             ? TypeWriterText(
+                                maintainSize: false,
                                 key: ValueKey(message.hashCode),
-                                text: Text(
-                                  message.content,
-                                  softWrap: true,
-                                ),
+                                text: Text(message.content),
                                 duration: const Duration(milliseconds: 20),
                               )
                             : Text(message.content),
