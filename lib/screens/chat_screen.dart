@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:food_spotlight/constant/api_keys.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:typewritertext/typewritertext.dart';
 import 'package:food_spotlight/api/network_service.dart';
@@ -21,42 +20,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool isLoading = false;
   final firstAIAnswer =
-      'Hi, I am your Personal Health Assistant. What would you like to know?';
+      '''Hi, I am your Personal Health Assistant. What would you like to know'''
+      ''' about your food?'''
+      '''                                                                   _''';
+      
   final List<Message> messages = [];
 
   final NetworkService networkService = NetworkService();
 
-  Future<String> _startChat({question}) async {
-    String contextText = '''
-        '${widget.contextText}'
-        'above is all the information you need to know about health and nutrition.'
-        'And the name of Product is ${widget.productName}'
-        'if product name is provides then you have to answer the question based on the product name.'
-        'Based on the information provided and your knowledge about that product by product name, you have to answer my questions.'
-        'Hello AI, I’m seeking advice and information on health and nutrition. Could you provide guidance on a balanced diet, nutritional needs, and how to maintain a healthy lifestyle?'
-        
-        'Assume you are an Health and Nutrition Expert. Answer the following question with reference to the above text context, using a concise and informative style. Provide more detail only when explicitly asked.'
-    ''';
-
-    try {
-      String answer = await networkService.generateAIQueryResponse(
-          contextText, 
-        question,
-      );
-      return answer;
-    } catch (error) {
-      throw Exception('Error generating AI response: $error');
-    }
-  }
-
   void _handleSubmitted(String text) async {
-    FocusScopeNode currentFocus =
-        FocusScope.of(context); // get the current focus node
+    FocusScopeNode currentFocus = FocusScope.of(context);
 
     if (!currentFocus.hasPrimaryFocus) {
-      // prevent Flutter from throwing an exception
-      currentFocus
-          .unfocus(); // unfocus from current focus, so that keyboard will dismiss
+      currentFocus.unfocus();
     }
 
     if (isLoading) {
@@ -67,18 +43,40 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       isLoading = true;
       messages.add(Message(authorId: 0, content: text));
-    });
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        messages.add(Message(authorId: 1, content: ''));
-      });
+      messages.add(Message(authorId: 1, content: ''));
     });
 
-    String answer = await _startChat(question: text);
-    setState(() {
-      messages.removeLast();
-      messages.add(Message(authorId: 1, content: answer));
-      isLoading = false;
+    String contextText = '''
+      ${widget.contextText}
+      above is all the information you need to know about health and nutrition.
+      And the name of Product is ${widget.productName}.
+      If the product name is provided, then you have to answer the question based on the product name.
+      Based on the information provided and your knowledge about that product by product name, you have to answer my questions.
+      i will ask question such as Hello AI, I’m seeking advice and information on health and nutrition. Could you provide guidance on a balanced diet, nutritional needs, and how to maintain a healthy lifestyle?
+      
+      Assume you are a Health and Nutrition Expert. Answer the question that i will ask with reference to the above text context, using a very concise and informative style. Provide more detail only when explicitly asked otherise keep it short and simple.
+    ''';
+
+    Stream<String> responseStream =
+        networkService.generateAIQueryResponse(contextText, text);
+
+    StringBuffer fullResponse = StringBuffer();
+    responseStream.listen((chunk) {
+      fullResponse.write(chunk);
+      setState(() {
+        messages[messages.length - 1].content = fullResponse.toString();
+      });
+    }, onDone: () {
+      setState(() {
+        isLoading = false;
+      });
+    }, onError: (error) {
+      setState(() {
+        isLoading = false;
+        messages[messages.length - 1].content =
+            'Error: Unable to fetch response.';
+      });
+      print('Stream Error: $error');
     });
   }
 
@@ -161,8 +159,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.green,
         title: const Text(
           "Ask food related queries",
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
       body: Column(
@@ -228,7 +225,7 @@ class MessageItem extends StatelessWidget {
                       color: Colors.grey,
                       thickness: 1,
                     ),
-                    message.content == ''
+                    message.authorId == 1 && message.content.isEmpty
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -242,10 +239,16 @@ class MessageItem extends StatelessWidget {
                               ),
                             ],
                           )
-                        : TypeWriterText(
-                            text: Text(message.content),
-                            duration: const Duration(milliseconds: 10),
-                          ),
+                        : message.authorId == 1
+                            ? TypeWriterText(
+                                key: ValueKey(message.hashCode),
+                                text: Text(
+                                  message.content,
+                                  softWrap: true,
+                                ),
+                                duration: const Duration(milliseconds: 20),
+                              )
+                            : Text(message.content),
                   ]),
             ),
           ),
@@ -257,7 +260,7 @@ class MessageItem extends StatelessWidget {
 
 class Message {
   final int authorId;
-  final String content;
+  String content; // Changed from 'final String content;'
 
   Message({required this.authorId, required this.content});
 }
