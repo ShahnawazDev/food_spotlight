@@ -12,63 +12,92 @@ import 'package:food_spotlight/models/search.dart';
 class NetworkService {
   String responseText = '';
 
+  //OLD IMPLEMENTATION OF generateAIResponse FUNCTION to directly call the Sambanova API
+  // Future<String?> generateAIResponse(File imageFile, String prompt) async {
+  //   Uint8List imageBytes = await imageFile.readAsBytes();
+  //   // Prepend the required prefix to the base64 image
+  //   String base64Image = 'data:image/jpeg;base64,${base64Encode(imageBytes)}';
+
+  //   const apiUrl = 'https://api.sambanova.ai/v1/chat/completions';
+  //   const apiKey = sambanovaAPIKey; // Replace with your actual API key
+
+  //   final requestBody = {
+  //     'model': 'Llama-3.2-90B-Vision-Instruct',
+  //     'messages': [
+  //       {
+  //         'role': 'user',
+  //         'content': [
+  //           {
+  //             'type': 'text',
+  //             'text': prompt,
+  //           },
+  //           {
+  //             'type': 'image_url',
+  //             'image_url': {
+  //               'url': base64Image,
+  //             },
+  //           }
+  //         ],
+  //       },
+  //     ],
+  //   };
+
+  //   final response = await http.post(
+  //     Uri.parse(apiUrl),
+  //     headers: {
+  //       'Authorization': 'Bearer $apiKey',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: jsonEncode(requestBody),
+  //   );
+
+  //   // print('API Response Status: ${response.statusCode}');
+  //   // print('API Response Body: ${response.body}'); // Debugging line
+
+  //   if (response.statusCode == 200) {
+  //     final responseData = jsonDecode(response.body);
+  //     // print('Decoded JSON Data: $responseData'); // Debugging line
+  //     if (responseData['choices'] != null &&
+  //         responseData['choices'].isNotEmpty) {
+  //       String answer = responseData['choices'][0]['message']['content'];
+  //       // print('Extracted Answer: $answer'); // Debugging line
+  //       responseText = answer;
+  //       return answer;
+  //     } else {
+  //       throw Exception('No choices found in AI response: ${response.body}');
+  //     }
+  //   } else {
+  //     throw Exception('Failed to generate AI response: ${response.body}');
+  //   }
+  // }
+
+  // ...existing code...
+  //NEW IMPLEMENTATION OF generateAIResponse FUNCTION to call the Azure Function
   Future<String?> generateAIResponse(File imageFile, String prompt) async {
     Uint8List imageBytes = await imageFile.readAsBytes();
-    // Prepend the required prefix to the base64 image
     String base64Image = 'data:image/jpeg;base64,${base64Encode(imageBytes)}';
 
-    const apiUrl = 'https://api.sambanova.ai/v1/chat/completions';
-    const apiKey = sambanovaAPIKey; // Replace with your actual API key
-
+    const String azureFunctionUrl =
+        'https://book-function-app.azurewebsites.net/api/callsambanova?code=zZyTpQOC1pk-a7Baok7OvltBHumuolIVbJ0kLc5Wlh7-AzFui25B9g%3D%3D';
     final requestBody = {
-      'model': 'Llama-3.2-90B-Vision-Instruct',
-      'messages': [
-        {
-          'role': 'user',
-          'content': [
-            {
-              'type': 'text',
-              'text': prompt,
-            },
-            {
-              'type': 'image_url',
-              'image_url': {
-                'url': base64Image,
-              },
-            }
-          ],
-        },
-      ],
+      'prompt': prompt,
+      'base64Image': base64Image,
     };
 
     final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Authorization': 'Bearer $apiKey',
-        'Content-Type': 'application/json',
-      },
+      Uri.parse(azureFunctionUrl),
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode(requestBody),
     );
 
-    // print('API Response Status: ${response.statusCode}');
-    // print('API Response Body: ${response.body}'); // Debugging line
-
     if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      // print('Decoded JSON Data: $responseData'); // Debugging line
-      if (responseData['choices'] != null &&
-          responseData['choices'].isNotEmpty) {
-        String answer = responseData['choices'][0]['message']['content'];
-        // print('Extracted Answer: $answer'); // Debugging line
-        responseText = answer;
-        return answer;
-      } else {
-        throw Exception('No choices found in AI response: ${response.body}');
-      }
+      responseText = response.body;
+      return responseText;
     } else {
       throw Exception('Failed to generate AI response: ${response.body}');
     }
   }
+  // ...existing code...
 
   Future<ProductInfo> generateProductInfo(File image, String prompt) async {
     try {
@@ -103,67 +132,91 @@ class NetworkService {
     );
   }
 
-  Stream<String> generateAIQueryResponse(String contextText, String question) async* {
-    const apiUrl = 'https://api.sambanova.ai/v1/chat/completions';
-    const apiKey = sambanovaAPIKey; // Replace with your actual API key
+  //OLD IMPLEMENTATION OF generateAIQueryResponse FUNCTION to directly call the Sambanova API
+  // Stream<String> generateAIQueryResponse(
+  //     String contextText, String question) async* {
+  //   const apiUrl = 'https://api.sambanova.ai/v1/chat/completions';
+  //   const apiKey = sambanovaAPIKey; // Replace with your actual API key
 
-    final headers = {
-      'Authorization': 'Bearer $apiKey',
-      'Content-Type': 'application/json',
+  //   final headers = {
+  //     'Authorization': 'Bearer $apiKey',
+  //     'Content-Type': 'application/json',
+  //   };
+
+  //   final body = jsonEncode({
+  //     'stream': true,
+  //     'model': 'Meta-Llama-3.1-8B-Instruct',
+  //     'messages': [
+  //       {
+  //         'role': 'system',
+  //         'content': contextText,
+  //       },
+  //       {
+  //         'role': 'user',
+  //         'content': question,
+  //       },
+  //     ],
+  //   });
+
+  //   final request = http.Request('POST', Uri.parse(apiUrl));
+  //   request.headers.addAll(headers);
+  //   request.body = body;
+
+  //   final response = await request.send();
+
+  //   if (response.statusCode != 200) {
+  //     throw Exception('Failed to generate AI response: ${response.statusCode}');
+  //   }
+
+  //   final stream = response.stream.transform(utf8.decoder);
+
+  //   await for (var value in stream) {
+  //     final lines = value.split('\n');
+  //     for (var line in lines) {
+  //       line = line.trim();
+  //       if (line.startsWith('data: ')) {
+  //         final dataString = line.substring(6).trim();
+  //         if (dataString == '[DONE]') {
+  //           return;
+  //         }
+  //         try {
+  //           final jsonData = jsonDecode(dataString);
+  //           final choices = jsonData['choices'];
+  //           if (choices != null && choices.isNotEmpty) {
+  //             final delta = choices[0]['delta'];
+  //             final content = delta['content'];
+  //             if (content != null && content.isNotEmpty) {
+  //               yield content;
+  //             }
+  //           }
+  //         } catch (e) {
+  //           // Handle parsing errors
+  //           print('Parsing Error: $e');
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  //NEW IMPLEMENTATION OF generateAzureFunctionQueryResponse FUNCTION to call the Azure Function
+  Stream<String> generateAzureFunctionQueryResponse(String contextText, String question) async* {
+    const azureFunctionUrl =
+        'https://book-function-app.azurewebsites.net/api/callSambanova?code=zZyTpQOC1pk-a7Baok7OvltBHumuolIVbJ0kLc5Wlh7-AzFui25B9g%3D%3D';
+  
+    final requestBody = {
+      'prompt': '$contextText\nUser: $question',
+      'base64Image': '' // Provide image if required
     };
-
-    final body = jsonEncode({
-      'stream': true,
-      'model': 'Meta-Llama-3.1-8B-Instruct',
-      'messages': [
-        {
-          'role': 'system',
-          'content': contextText,
-        },
-        {
-          'role': 'user',
-          'content': question,
-        },
-      ],
-    });
-
-    final request = http.Request('POST', Uri.parse(apiUrl));
-    request.headers.addAll(headers);
-    request.body = body;
-
-    final response = await request.send();
-
+  
+    final response = await http.post(
+      Uri.parse(azureFunctionUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+  
     if (response.statusCode != 200) {
-      throw Exception('Failed to generate AI response: ${response.statusCode}');
+      throw Exception('Failed to generate AI response: ${response.body}');
     }
-
-    final stream = response.stream.transform(utf8.decoder);
-
-    await for (var value in stream) {
-      final lines = value.split('\n');
-      for (var line in lines) {
-        line = line.trim();
-        if (line.startsWith('data: ')) {
-          final dataString = line.substring(6).trim();
-          if (dataString == '[DONE]') {
-            return;
-          }
-          try {
-            final jsonData = jsonDecode(dataString);
-            final choices = jsonData['choices'];
-            if (choices != null && choices.isNotEmpty) {
-              final delta = choices[0]['delta'];
-              final content = delta['content'];
-              if (content != null && content.isNotEmpty) {
-                yield content;
-              }
-            }
-          } catch (e) {
-            // Handle parsing errors
-            print('Parsing Error: $e');
-          }
-        }
-      }
-    }
+    yield response.body;
   }
 }

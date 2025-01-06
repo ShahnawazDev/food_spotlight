@@ -11,6 +11,10 @@ Before you begin, ensure you have met the following requirements:
 * You have read the [Flutter installation guide](https://flutter.dev/docs/get-started/install).
 * You have a basic understanding of Flutter and Dart.
 
+## Tech Stack
+
+This project uses Flutter with an AI service powered by an Azure Function.
+
 ## Installing Food Spotlight
 
 To install Food Spotlight, follow these steps:
@@ -30,13 +34,10 @@ To install Food Spotlight, follow these steps:
 
 ## Running Food Spotlight
 
-To run Food Spotlight, follow these steps:
-
-1. Build the project with your `SAMBOVANA_AI_KEY`:
-    ```bash
-    flutter run --dart-define=SAMBOVANA_AI_KEY=Your_Api_Key_Here
-    ```
-    Replace `Your_Api_Key_Here` with your actual `SAMBOVANA_AI_KEY`.
+To run Food Spotlight, simply use:
+```bash
+flutter run
+```
 
 ## Contributing to Food Spotlight
 

@@ -55,9 +55,13 @@ class _ChatScreenState extends State<ChatScreen> {
       
       Assume you are a Health and Nutrition Expert. Answer the question that i will ask with reference to the above text context, using a very concise and informative style. Provide more detail only when explicitly asked otherise keep it short and simple.
     ''';
-
+    //old implementation
+    // Stream<String> responseStream =
+    //     networkService.generateAIQueryResponse(contextText, text);
+    
+    //new implementation
     Stream<String> responseStream =
-        networkService.generateAIQueryResponse(contextText, text);
+        networkService.generateAzureFunctionQueryResponse(contextText, text);
 
     StringBuffer fullResponse = StringBuffer();
     responseStream.listen((chunk) {
